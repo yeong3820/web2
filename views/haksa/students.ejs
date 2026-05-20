@@ -22,25 +22,26 @@
 </div>
 <script>
     getList();
-    //삭제버튼을 클릭한 경우
-    $("tbl").on("click", ".btn-sm", function(){
+
+    // 삭제버튼 클릭 핸들러: 기호 (#) 추가하여 정상 바인딩
+    $("#tbl").on("click", ".btn-sm", function(){
         const scode=$(this).attr("scode");
-        //alert(scode);
         if(confirm(`${scode}번 학생을 삭제하실래요?`)){
-            //삭제하기
             $.ajax({
                 type:"post",
                 url:"/haksa/stu/delete",
                 data:{scode},
                 success:function(){
+                    alert("삭제완료!");
                     getList();
                 },
                 error:function(){
                     alert("학생 삭제를 실패했습니다.");
                 }
-            })
+            });
         }
     });
+
     function getList(){
         $.ajax({
             type:"get",
@@ -50,6 +51,6 @@
                 const temp = Handlebars.compile($("#temp").html());
                 $("#tbl").html(temp(data));
             }
-        })
+        });
     }
 </script>

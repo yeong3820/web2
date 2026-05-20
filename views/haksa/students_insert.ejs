@@ -43,30 +43,34 @@
     </div>
 </div>
 <script>
+    // 등록 submit 이벤트 전체를 감싸도록 범위를 정정합니다.
     $(frm).on("submit", function(e){
         e.preventDefault();
-    })
-    const scode=$(frm.scode).val();
-    const sname=$(frm.sname).val();
-    const dept=$(frm.dept).val();
-    const birthday=$(frm.birthday).val();
-    const year=$(frm.year).val();
-    const pcode=$(frm.pcode).val();
-    if(pname==""){
-        alert("학생이름을 반드시 입력하세요!");
-         $(frm.sname).focus();
-    }else{
-        $.ajax({
-            type:"post",
-            url:"/haksa/stu/insert",
-            data:{scode, sname, dept, birthday, year, pcode},
-            success:function(){
-                alert("새로운 학생을 등록했습니다.");
-            location.href="/haksa/stu"
-            },
-            error:function(){
-                alert("학생등록을 실패했습니다.");
-            }
-        })
-    }
+        
+        const scode=$(frm.scode).val();
+        const sname=$(frm.sname).val();
+        const dept=$(frm.dept).val();
+        const birthday=$(frm.birthday).val();
+        const year=$(frm.year).val();
+        const pcode=$(frm.pcode).val();
+
+        if(sname==""){ // pname -> sname 오타 수정
+            alert("학생이름을 반드시 입력하세요!");
+            $(frm.sname).focus();
+        }else{
+            if(!confirm("학생등록을 정말로 하실래요?")) return;
+            $.ajax({
+                type:"post",
+                url:"/haksa/stu/insert",
+                data:{scode, sname, dept, birthday, year, pcode},
+                success:function(){
+                    alert("새로운 학생을 등록했습니다.");
+                    location.href="/haksa/stu";
+                },
+                error:function(){
+                    alert("학생등록을 실패했습니다.");
+                }
+            });
+        }
+    });
 </script>

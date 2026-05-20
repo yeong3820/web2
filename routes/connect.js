@@ -6,8 +6,8 @@ async function getConnection(){
     try{
         connection = await oracledb.getConnection({
             user:'user207',
-            password:'pass',
-            connectString:'172.18.7.161:1521/xe'
+            password:'PASS',
+            connectString:'localhost/xe'
         });
         console.log('DB 연결 성공');
         return connection;
