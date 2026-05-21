@@ -1,3 +1,50 @@
 <div class="my-5">
     <h1 class>게시판</h1>
+    <table id="tbl" class="table table-striped talbe-hover"></table>
+    <div>
+        <button id="prev" class="btn btn-outline-primary btn-sm px-3">이전</button>
+        <span id="page-info">1/10</span>
+        <button id="next" class="btn btn-outline-primary btn-sm px-3">다음</button>
+    </div>
+    <script id="temp" type="text/x-handlebars-template">
+        <tbody>
+            {{#each .}}
+            <tr>
+                <td>{{ID}}</td>
+                <td>{{TITLE}}</td>
+                <td>{{SNAME}}({{WRITER}})</td>
+                <td class="text-end">{{REG_DATE}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </script>
 </div>
+<script>
+    let page=2;
+    let size=10;
+    getList();
+
+    $("next").on("click", function(){
+        page++;
+        getList();
+    });
+    $("prev").on("click", function(){
+        page--;
+        getList();
+    });
+    function getList(){
+        $.ajax({
+            type:"get",
+            url:"/posts/list.json",
+            data:{page, size},
+            success:function(data){
+                console.log(data);
+                const template=Handlebars.compile($("#temp").html());
+                $("#tbl").html(temp(data));
+                $("span_page").html(`@{page}`);
+                if(page==1) $("#prev").attr("disabled", true);
+                else $("#prev").attr("disabled", false);
+            }
+        });
+}
+</script>
