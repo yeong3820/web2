@@ -10,37 +10,40 @@ router.get('/', function(req, res, next) {
 
 /* 게시글 목록 데이터 반환 API (수업 시간 5개 컷 페이징 연동) */
 router.get('/list.json', async function(req, res) {
-  // 프론트엔드에서 page나 size가 안 넘어올 경우를 대비해 5개씩 컷하도록 기본값 세팅
-  const page = parseInt(req.query.page) || 1;
-  const size = parseInt(req.query.size) || 5; 
-  
-  // 오라클 view_posts 뷰의 행 번호(rn) 구간 계산
-  const startRow = (page - 1) * size + 1;
-  const endRow = page * size;
-  
-  let con;
-  try {
-    con = await getConnection();
-    
-    // 1. view_posts 뷰에서 행 번호(rn) 범위를 제한하여 딱 5개 레코드만 조회 (sname, fmt_date 포함)
-    let sql = "select * from view_posts where rn between :startRow and :endRow";
-    let result = await con.execute(sql, { startRow, endRow }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-    const list = result.rows; // 조회된 5개의 게시글 배열
+    let page = parseInt(req.query.page) || 1;
+    let size = parseInt(req.query.size) || 5;
+    let word = req.query.word || '';
+    let off_rows = (page - 1) * size;
+    let con;
+    try {
+      con = await getConnection();
+      let sql="select * from view_posts";
+        if(word) {
+          sql += ` where TITLE like '%${word}%' or content like '%${word}%' or sname like '%${word}%'`;
+        }
+        sql += " order by ID DESC";
+        sql += ` OFFSET ${off_rows} ROWS FETCH NEXT ${size} ROWS ONLY`;
+      let result = await con.execute(sql, {}, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+      let list = result.rows;
 
-    // 2. 전체 페이지 개수 산정을 위해 전체 게시글 수 카운트 (conut -> count 오타 수정 완료)
-    sql = "select count(*) from view_posts";
-    result = await con.execute(sql);
-    const total = result.rows[0][0]; // 전체 글 총 개수
-    
-    // 3. ★ 중요: 프론트엔드가 요구하는 객체 { list, total } 상자 구조로 전송
-    res.send({ list, total });
-    
-  } catch(err) {
-    console.log("게시글 목록 데이터 에러 발생:", err.message);
-    res.status(500).send(err.message);
-  } finally {
-    if (con) await con.close();
-  }
+      sql = "select count(*) from view_posts";
+        if(word) {
+          sql += ` where TITLE like '%${word}%' or content like '%${word}%' or sname like '%${word}%'`;
+        }
+      result = await con.execute(sql);
+      let count=result.rows[0][0];
+
+      res.send({ list, count });
+    } catch (err) {
+      console.error('게시글 목록 데이터', err.message);
+    }finally {
+      if (con) await con.close();
+    }
+});
+
+/* 글쓰기 페이지 */
+router.get('/write', function(req, res, next) {
+  res.render('index', { title: '글쓰기', pageName: 'posts/insert.ejs' });
 });
 
 module.exports = router;
