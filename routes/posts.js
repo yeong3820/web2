@@ -18,18 +18,14 @@ router.get('/list.json', async function(req, res) {
     try {
       con = await getConnection();
       let sql="select * from view_posts";
-        if(word) {
-          sql += ` where TITLE like '%${word}%' or content like '%${word}%' or sname like '%${word}%'`;
-        }
+        sql += `where TITLE like '%${word}%' or content like '%${word}%' or sname like '%${word}%'`;
         sql += " order by ID DESC";
         sql += ` OFFSET ${off_rows} ROWS FETCH NEXT ${size} ROWS ONLY`;
       let result = await con.execute(sql, {}, { outFormat: oracledb.OUT_FORMAT_OBJECT });
       let list = result.rows;
 
       sql = "select count(*) from view_posts";
-        if(word) {
-          sql += ` where TITLE like '%${word}%' or content like '%${word}%' or sname like '%${word}%'`;
-        }
+      sql += ` where TITLE like '%${word}%' or content like '%${word}%' or sname like '%${word}%'`;
       result = await con.execute(sql);
       let count=result.rows[0][0];
 
@@ -41,9 +37,8 @@ router.get('/list.json', async function(req, res) {
     }
 });
 
-/* 글쓰기 페이지 */
-router.get('/write', function(req, res, next) {
+// 글쓰기 페이지 이동
+router.get('/insert', function(req, res) {
   res.render('index', { title: '글쓰기', pageName: 'posts/insert.ejs' });
 });
-
 module.exports = router;
