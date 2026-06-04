@@ -30,7 +30,7 @@
             {{#each .}}
             <tr>
                 <td>{{ID}}</td>
-                <td>{{TITLE}}</td>
+                <td><a href="/posts/{{ID}}">{{TITLE}}</a></td>
                 <td>{{SNAME}}</td>
                 <td>{{FMT_DATE}}</td>
             </tr>
@@ -46,7 +46,7 @@
 
     $("#btn-write").on("click", function(){
         if(scode){
-            location.href="/posts/write";
+            location.href="/posts/insert";
         }
         else{
             sessionStorage.setItem("target", "posts/insert");

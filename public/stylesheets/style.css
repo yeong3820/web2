@@ -3,3 +3,34 @@
 * {
    font-family: "Dongle", sans-serif;
 }
+
+body {
+   font-size: 1.3rem;
+}
+
+.container {
+   max-width: 1320px;
+}
+
+.card-header,
+.card-footer {
+   font-size: 1.2rem;
+}
+
+h1 {
+   font-size: 2.8rem;
+}
+
+.table {
+   font-size: 1.2rem;
+}
+
+.form-control,
+.form-select,
+.btn {
+   font-size: 1.2rem;
+}
+
+.nav-link {
+   font-size: 1.2rem;
+}
